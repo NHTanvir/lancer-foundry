@@ -8,14 +8,65 @@ license = "MIT"
 repository = "https://github.com/NHTanvir/lancer-foundry"
 
 [dependencies]
-clap = { version = "4", features = ["derive"] }
-tokio = { version = "1", features = ["full"] }
-anyhow = "1"
-tracing = "0.1"
-tracing-subscriber = "0.3"
+# ── CLI / async runtime ──────────────────────────────────────────────────────
+clap         = { version = "4",    features = ["derive"] }
+tokio        = { version = "1",    features = ["full"] }
+futures      = "0.3"
+rayon        = "1"
+
+# ── Error handling / logging ─────────────────────────────────────────────────
+eyre         = "0.6"
+color-eyre   = "0.6"
+tracing      = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# ── Serialisation ────────────────────────────────────────────────────────────
+serde        = { version = "1", features = ["derive"] }
+serde_json   = "1"
+toml         = "0.8"
+
+# ── Crypto / secp256k1 / hashing ─────────────────────────────────────────────
+k256         = { version = "0.13", features = ["ecdsa"] }
+sha3         = "0.10"
+hex          = "0.4"
+rand_core    = { version = "0.6", features = ["getrandom"] }
+
+# ── Ethereum types + ABI (Weeks 2-3 cast) ────────────────────────────────────
+alloy-primitives = "0.8"
+alloy-dyn-abi    = "0.8"
+alloy-rlp        = "0.3"
+
+# ── HTTP / JSON-RPC client (Weeks 2-3 cast) ──────────────────────────────────
+reqwest      = { version = "0.12", features = ["json", "blocking"] }
+url          = "2"
+
+# ── EVM execution (Week 4+ anvil/forge) ──────────────────────────────────────
+revm         = { version = "14", default-features = false, features = ["std", "serde-json"] }
+
+# ── HTTP server for anvil (Week 4) ───────────────────────────────────────────
+axum         = { version = "0.7", features = ["tokio", "json"] }
+tower        = { version = "0.4", features = ["full"] }
+tower-http   = { version = "0.5", features = ["trace"] }
+http         = "1"
+
+# ── Forge file utilities (Week 5) ────────────────────────────────────────────
+walkdir      = "2"
+glob         = "0.3"
+tempfile     = "3"
+parking_lot  = "0.12"
+
+# ── Fuzzing (Week 8) ─────────────────────────────────────────────────────────
+proptest     = "1"
+
+# ── Chisel REPL readline (Week 10) ───────────────────────────────────────────
+rustyline    = "14"
+
+# ── System utilities ─────────────────────────────────────────────────────────
+which        = "6"
+dirs         = "5"
 
 [profile.release]
-opt-level = 3
-lto = true
+opt-level    = 3
+lto          = true
 codegen-units = 1
-strip = true
+strip        = true
