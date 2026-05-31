@@ -1,15 +1,45 @@
-//! lancer-foundry
-//! Rust clone of foundry. See plan.md (local, gitignored) for the spec.
+mod anvil;
+mod cast;
+mod cheatcodes;
+mod chisel;
+mod config;
+mod evm;
+mod forge;
 
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
-#[derive(Parser, Debug)]
-#[command(name = "lancer-foundry", version, about = "Rust clone of foundry")]
-struct Cli {}
+#[derive(Parser)]
+#[command(
+    name = "lancer-foundry",
+    version,
+    about = "Ethereum smart contract development toolkit (Lancer clone of Foundry)"
+)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
 
-fn main() -> anyhow::Result<()> {
+#[derive(Subcommand)]
+enum Commands {
+    /// Build, test, deploy, and lint Solidity contracts
+    Forge(forge::ForgeArgs),
+    /// EVM RPC, ABI codec, wallet, and transaction utilities
+    Cast(cast::CastArgs),
+    /// Local EVM devnet with fork support
+    Anvil(anvil::AnvilArgs),
+    /// Interactive Solidity REPL
+    Chisel(chisel::ChiselArgs),
+}
+
+#[tokio::main]
+async fn main() -> eyre::Result<()> {
+    color_eyre::install()?;
     tracing_subscriber::fmt::init();
-    let _cli = Cli::parse();
-    println!("lancer-foundry - scaffold ready. Implement per plan.md.");
-    Ok(())
+    let cli = Cli::parse();
+    match cli.command {
+        Commands::Forge(a) => forge::run(a).await,
+        Commands::Cast(a) => cast::run(a).await,
+        Commands::Anvil(a) => anvil::run(a).await,
+        Commands::Chisel(a) => chisel::run(a).await,
+    }
 }
